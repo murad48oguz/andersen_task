@@ -4,6 +4,15 @@ from rest_framework.response import Response
 from .models import Task
 from .serializers import TaskSerializer
 from .permissions import IsOwner
+from rest_framework import status
+from rest_framework.exceptions import APIException
+
+
+class InvalidStatusError(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = 'Invalid status parameter. Valid values are: new, in_progress, completed.'
+    default_code = 'invalid_status'
+
 
 class TaskViewSet(viewsets.ModelViewSet):
     serializer_class = TaskSerializer
@@ -11,17 +20,20 @@ class TaskViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = Task.objects.filter(user=self.request.user)
-        
+    
         status_param = self.request.query_params.get("status")
         if status_param:
             status_param = status_param.lower()
             valid_statuses = ["new", "in_progress", "completed"]
-            if status_param in valid_statuses:
-                queryset = queryset.filter(status=status_param)
-            else:
-                return Task.objects.none()
+            
+            if status_param not in valid_statuses:
+                return queryset.none()
+                
+            queryset = queryset.filter(status=status_param)
+        
         return queryset
 
+    
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
     

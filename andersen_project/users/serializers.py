@@ -21,4 +21,9 @@ class RegisterSerializer(serializers.ModelSerializer):
             last_name=last_name
         )
         return user
+
+
+    def validate_password(self, value):
+        validate_password(value)
+        return value
         
