@@ -140,7 +140,7 @@ SECRET_KEY=your-secure-secret-key-here
 DEBUG=True
 
 # Database Settings
-DB_NAME=taskflow
+DB_NAME=andersen
 DB_USER=your_username
 DB_PASSWORD=your_secure_password
 DB_HOST=localhost
